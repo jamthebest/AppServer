@@ -1,0 +1,10 @@
+C:\Users\JAM$\Downloads\Unitec\Seguridad Computacional\Proyecto\ProyectoServer\bin\Debug\ProyectoServer.exe.config
+C:\Users\JAM$\Downloads\Unitec\Seguridad Computacional\Proyecto\ProyectoServer\bin\Debug\ProyectoServer.exe
+C:\Users\JAM$\Downloads\Unitec\Seguridad Computacional\Proyecto\ProyectoServer\bin\Debug\ProyectoServer.pdb
+C:\Users\JAM$\Downloads\Unitec\Seguridad Computacional\Proyecto\ProyectoServer\bin\Debug\ProyectoServer.xml
+C:\Users\JAM$\Downloads\Unitec\Seguridad Computacional\Proyecto\ProyectoServer\obj\Debug\ProyectoServer.Resources.resources
+C:\Users\JAM$\Downloads\Unitec\Seguridad Computacional\Proyecto\ProyectoServer\obj\Debug\ProyectoServer.Server.resources
+C:\Users\JAM$\Downloads\Unitec\Seguridad Computacional\Proyecto\ProyectoServer\obj\Debug\ProyectoServer.vbproj.GenerateResource.Cache
+C:\Users\JAM$\Downloads\Unitec\Seguridad Computacional\Proyecto\ProyectoServer\obj\Debug\ProyectoServer.exe
+C:\Users\JAM$\Downloads\Unitec\Seguridad Computacional\Proyecto\ProyectoServer\obj\Debug\ProyectoServer.xml
+C:\Users\JAM$\Downloads\Unitec\Seguridad Computacional\Proyecto\ProyectoServer\obj\Debug\ProyectoServer.pdb
