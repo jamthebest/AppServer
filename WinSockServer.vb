@@ -61,18 +61,6 @@ Public Class WinSockServer
         Return Cliente.User
     End Function
 
-    Public Function getID(ByVal user As String) As Net.IPEndPoint
-        Dim Cliente As System.Collections.ICollection
-        Dim ret As Net.IPEndPoint = Nothing
-        'Recorro todos los clientes y voy cerrando las conexiones 
-        For Each Cliente In Clientes.Keys
-            If (Clientes(Cliente).User.Equals(user)) Then
-                ret = Cliente
-            End If
-        Next
-        Return ret
-    End Function
-
     Public Sub Escuchar()
         tcpLsn = New TcpListener(PuertoDeEscucha)
         'Inicio la escucha 
@@ -107,17 +95,36 @@ Public Class WinSockServer
         Next
     End Sub
 
-    Public Sub EnviarDatos(ByVal IDCliente As Net.IPEndPoint, ByVal Datos As String)
-        Dim mensaje As String = Datos
-        While (Encoding.ASCII.GetBytes(mensaje).Length < 1024)
-            mensaje = mensaje & "?"
-        End While
+    Public Sub EnviarDatos(ByVal user As String, ByVal datos As String)
+        SyncLock Me
+            Try
+                Dim Cliente As InfoDeUnCliente
+                'Recorro todos los clientes y voy cerrando las conexiones 
+                For Each Cliente In Clientes.Values
+                    If Cliente.User.Equals(user) Then
+                        EnviarDatos(Cliente.Socket.RemoteEndPoint, datos)
+                    End If
+                Next
+            Catch e As Exception
+                MsgBox("Error al Enviar Datos: " & e.Message)
+            End Try
+        End SyncLock
+    End Sub
 
-        Dim Cliente As InfoDeUnCliente
-        'Obtengo la informacion del cliente al que se le quiere enviar el mensaje 
-        Cliente = Clientes(IDCliente)
-        'Le envio el mensaje 
-        Cliente.Socket.Send(Encoding.ASCII.GetBytes(mensaje))
+    Public Sub EnviarDatos(ByVal IDCliente As Net.IPEndPoint, ByVal Datos As String)
+        If Clientes.ContainsKey(IDCliente) Then
+            Dim mensaje As String = Datos
+            While (Encoding.ASCII.GetBytes(mensaje).Length < 1024)
+                mensaje = mensaje & "?"
+            End While
+
+            Dim Cliente As InfoDeUnCliente
+
+            'Obtengo la informacion del cliente al que se le quiere enviar el mensaje 
+            Cliente = Clientes(IDCliente)
+            'Le envio el mensaje 
+            Cliente.Socket.Send(Encoding.ASCII.GetBytes(mensaje))
+        End If
     End Sub
 
     Public Sub EnviarDatos(ByVal Datos As String)

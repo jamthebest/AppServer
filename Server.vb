@@ -1,4 +1,7 @@
-﻿Public Class Server
+﻿Imports System.Data.SqlClient
+Imports System.Data.Common
+
+Public Class Server
 
     Dim WithEvents WinSockServer1 As New WinSockServer()
     Private demo As Threading.Thread = Nothing
@@ -28,9 +31,9 @@
             Me.Invoke(d, New Object() {[text1]})
         Else
             If tipo Then
-                Lista.Items.Add(IP1)
+                Lista.Items.Add(text1)
             Else
-                Lista.Items.Remove(IP1)
+                Lista.Items.Remove(text1)
             End If
         End If
     End Sub
@@ -112,8 +115,9 @@
         IP1 = WinSockServer1.Cerrar(IDTerminal)
         tipo = False
         funciones.cambioEstado(New User(IP1), 0)
-        Me.demo = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.ThreadProcSafe))
-        Me.demo.Start()
+        Me.SetText(IP1)
+        'Me.demo = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.ThreadProcSafe))
+        'Me.demo.Start()
     End Sub
 
     Private Sub WinSockServer_DatosRecibidos(ByVal IDTerminal As System.Net.IPEndPoint, ByVal Datos As String) Handles WinSockServer1.DatosRecibidos
@@ -153,14 +157,41 @@
                 texto3 = mensaje.Substring(mensaje.IndexOf("?XXXJAMXXX?") + 11)
                 mensaje = mensaje.Substring(0, mensaje.IndexOf("?XXXJAMXXX?"))
                 texto2 = mensaje
+                Dim message As Mensaje = funciones.DesSerializar(mensaje)
+                WinSockServer1.SetUser(IDTerminal, message.MessageFrom.User)
 
                 solicitud.MensajeSolicitud = "Mensaje Enviado!"
                 solicitud.TipoSolicitud = 5
+
+                Dim soli As Solicitud = New Solicitud(2, Datos)
+                WinSockServer1.EnviarDatos(message.MessageTo.User, funciones.Encriptar(soli, "Solicitud"))
+                'funciones.nuevoMensaje(message.MessageFrom.User, message.MessageTo.User, mensaje)
 
             Case 3
                 WinSockServer1.SetUser(IDTerminal, sol.ArgumentosSolicitud.Item(0).ToString)
                 solicitud.ArgumentosSolicitud = funciones.obtenerClientes(New User(sol.ArgumentosSolicitud.Item(0).ToString))
                 solicitud.MensajeSolicitud = "Usuarios Enviados"
+
+            Case 4
+                WinSockServer1.SetUser(IDTerminal, sol.ArgumentosSolicitud.Item(0).ToString)
+                Dim arg As ArrayList = New ArrayList
+                Dim mensajes As SqlDataReader = Nothing
+                arg = funciones.obtenerMensajes(New User(sol.ArgumentosSolicitud.Item(0).ToString), New User(sol.ArgumentosSolicitud.Item(1).ToString))
+                'If Not IsNothing(mensajes) Then
+                'MsgBox(mensajes.FieldCount())
+                'For Each item As DbDataRecord In mensajes
+                'MsgBox(item.GetString(0))
+                'arg.Add(item.GetString(0))
+                'arg.Add(item.GetString(1))
+                'arg.Add(item.GetString(2))
+                'arg.Add(item.GetString(3))
+                'Next
+                'MsgBox(arg.Count)
+                solicitud.ArgumentosSolicitud = arg
+                'End If
+                'MsgBox(arg.Count)
+                solicitud.MensajeSolicitud = "Mensajes Enviados"
+
             Case Else
 
         End Select
@@ -171,7 +202,7 @@
         Me.txtSalEncriptado.Text = tDes
         Me.txtSalMD5.Text = salMd
         Me.WinSockServer1.EnviarDatos(IDTerminal, tDes)
-        
+
         Me.demo1 = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.ThreadProcSafe1))
         Me.demo1.Start()
         Me.demo2 = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.ThreadProcSafe2))

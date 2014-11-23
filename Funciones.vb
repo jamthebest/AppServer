@@ -126,7 +126,7 @@ Public Class Funciones
         End SyncLock
     End Function
 
-    Public Function obtenerMensajes(ByVal usuario As User, ByVal para As User, ByVal contador As Integer) As System.Data.SqlClient.SqlDataReader
+    Public Function obtenerMensajes(ByVal usuario As User, ByVal para As User) As ArrayList
         SyncLock Me
             Try
                 Conectado()
@@ -136,11 +136,45 @@ Public Class Funciones
                 cmd.Parameters.AddWithValue("@de", usuario.User)
                 cmd.Parameters.AddWithValue("@para", para.User)
                 Dim dr As SqlDataReader
+                Dim arg As ArrayList = New ArrayList
                 dr = cmd.ExecuteReader
-                Return dr
+
+                If dr.HasRows Then
+                    For Each item As System.Data.Common.DbDataRecord In dr
+                        arg.Add(item.GetString(0))
+                        arg.Add(item.GetString(1))
+                        arg.Add(item.GetString(2))
+                        arg.Add(item.GetString(3))
+                    Next
+                    Return arg
+                End If
+                Return Nothing
             Catch ex As Exception
                 MsgBox("Error al cambiar Estado: " & ex.Message)
                 Return Nothing
+            Finally
+                Desconectado()
+            End Try
+        End SyncLock
+    End Function
+
+    Public Function nuevoMensaje(ByVal de As String, ByVal para As String, ByVal mensaje As String) As Boolean
+        SyncLock Me
+            Try
+                Conectado()
+                cmd = New SqlCommand("nuevoMensaje")
+                cmd.CommandType = CommandType.StoredProcedure
+                cmd.Connection = cnn
+                cmd.Parameters.AddWithValue("@de", de)
+                cmd.Parameters.AddWithValue("@para", para)
+                cmd.Parameters.AddWithValue("@mensaje", mensaje)
+                cmd.Parameters.AddWithValue("@fecha", DateTime.Now.ToString("dd-MM-yyyy  hh:mm:ss"))
+                Dim dr As SqlDataReader
+                dr = cmd.ExecuteReader
+                Return True
+            Catch ex As Exception
+                MsgBox("Error al guardar mensaje: " & ex.Message)
+                Return False
             Finally
                 Desconectado()
             End Try
@@ -219,6 +253,12 @@ Public Class Funciones
             End Try
             Return mensaje
         End SyncLock
+    End Function
+
+    Public Function Encriptar(ByVal objeto As Solicitud, ByVal ruta As String) As String
+        Dim txtXML As String = Serializar(objeto, ruta) 'funcion que convierte el mensaje a XML
+        Dim md As String = MD5Encrypt(txtXML) 'Se encripta el XML en MD5
+        Return encryptString(txtXML & "?XXXJAMXXX?" & md) 'Se encripta el MD5 con el XML en 3DES
     End Function
 
     Private Function xmlToFile(ByVal xml As String) As String

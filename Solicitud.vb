@@ -1,5 +1,5 @@
 ﻿Public Class Solicitud
-    'Tipos: 1 = Login, 2 = Mensaje, 3 = ObtenerUsuarios, 4 = NuevoCliente, 5 = Respuesta
+    'Tipos: 1 = Login, 2 = Mensaje, 3 = ObtenerUsuarios, 4 = ObtenerMensajes, 5 = Respuesta, 6 = NuevoCliente
     Private tipo As Integer
     Private mensaje As String
     Private argumentos As ArrayList

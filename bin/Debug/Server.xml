@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Solicitud xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <TipoSolicitud>1</TipoSolicitud>
+  <TipoSolicitud>4</TipoSolicitud>
   <ArgumentosSolicitud>
     <anyType xsi:type="xsd:string">jam</anyType>
-    <anyType xsi:type="xsd:string">aa4e0ac0ac1b35c1dc7c1b288f989e0f</anyType>
+    <anyType xsi:type="xsd:string">jam2</anyType>
   </ArgumentosSolicitud>
 </Solicitud>
