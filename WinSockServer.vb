@@ -112,11 +112,18 @@ Public Class WinSockServer
 
     Public Sub EnviarDatos(ByVal IDCliente As Net.IPEndPoint, ByVal Datos As String)
         If Clientes.ContainsKey(IDCliente) Then
-            Dim mensaje As String = Datos
+            Dim mens As String = Datos & "?"
+            Dim mensaje As String = mens
+            While Encoding.ASCII.GetBytes(mens).Length > 1024
+                mens = mens.Substring(0, mens.Length - 1024)
+            End While
+            
             'MsgBox("Tamaño: " & Encoding.ASCII.GetBytes(mensaje).Length)
-            While (Encoding.ASCII.GetBytes(mensaje).Length < 1024)
+            While (Encoding.ASCII.GetBytes(mens).Length < 1024)
+                mens = mens & "?"
                 mensaje = mensaje & "?"
             End While
+            'MsgBox("Tamaño: " & Encoding.ASCII.GetBytes(mensaje).Length)
 
             Dim Cliente As InfoDeUnCliente
 
@@ -176,12 +183,17 @@ Public Class WinSockServer
                 If .Socket.Connected Then
                     Recibir = New Byte(1023) {}
                     Try
+                        Dim men As String = ""
                         'Me quedo esperando a que llegue un mensaje desde el cliente 
+                        Do
+                            Ret = .Socket.Receive(Recibir, Recibir.Length, SocketFlags.None)
+                            men &= Encoding.ASCII.GetString(Recibir)
+                            'MsgBox(men.Length & ">= 266240")
+                        Loop While Not men.Last.ToString.Equals("?") And men.Length < 300000
 
-                        Ret = .Socket.Receive(Recibir, Recibir.Length, SocketFlags.None)
                         If Ret > 0 Then
                             'Guardo el mensaje recibido 
-                            .UltimosDatosRecibidos = Encoding.ASCII.GetString(Recibir)
+                            .UltimosDatosRecibidos = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(men))
                             Clientes(IDReal) = InfoClienteActual
                             'Genero el evento de la recepcion del mensaje 
                             RaiseEvent DatosRecibidos(IDReal, .UltimosDatosRecibidos)

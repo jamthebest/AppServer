@@ -175,21 +175,9 @@ Public Class Server
             Case 4
                 WinSockServer1.SetUser(IDTerminal, sol.ArgumentosSolicitud.Item(0).ToString)
                 Dim arg As ArrayList = New ArrayList
-                Dim mensajes As SqlDataReader = Nothing
                 arg = funciones.obtenerMensajes(New User(sol.ArgumentosSolicitud.Item(0).ToString), New User(sol.ArgumentosSolicitud.Item(1).ToString))
-                If Not IsNothing(mensajes) Then
-                    MsgBox(mensajes.FieldCount())
-                    For Each item As DbDataRecord In mensajes
-                        MsgBox(item.GetString(0))
-                        arg.Add(item.GetString(0))
-                        arg.Add(item.GetString(1))
-                        arg.Add(item.GetString(2))
-                        arg.Add(item.GetString(3))
-                    Next
-                    MsgBox(arg.Count)
 
-                    'solicitud.ArgumentosSolicitud = arg
-                End If
+                solicitud.ArgumentosSolicitud = arg
                 solicitud.MensajeSolicitud = "Mensajes Enviados"
 
             Case Else
@@ -204,12 +192,17 @@ Public Class Server
         Me.txtSalMD5.Text = salMd
         Me.WinSockServer1.EnviarDatos(IDTerminal, tDes)
 
+        'Me.SetText2(texto2)
+        'Me.SetText3(texto3)
+        'Me.SetText1(texto)
+
         Me.demo1 = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.ThreadProcSafe1))
         Me.demo1.Start()
         Me.demo2 = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.ThreadProcSafe2))
         Me.demo2.Start()
         Me.demo3 = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.ThreadProcSafe3))
         Me.demo3.Start()
+
         'Muestro el mensaje recibido 
         ' Call MsgBox(WinSockServer1.ObtenerDatos(IDTerminal))
     End Sub
