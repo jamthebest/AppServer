@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Solicitud xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <TipoSolicitud>4</TipoSolicitud>
-  <ArgumentosSolicitud>
-    <anyType xsi:type="xsd:string">jam</anyType>
-    <anyType xsi:type="xsd:string">jam2</anyType>
-  </ArgumentosSolicitud>
-</Solicitud>
+<Mensaje xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Text>hola</Text>
+  <MessageTo>
+    <User>jam2</User>
+  </MessageTo>
+  <MessageFrom>
+    <User>jam</User>
+  </MessageFrom>
+</Mensaje>

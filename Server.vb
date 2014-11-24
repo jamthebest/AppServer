@@ -163,9 +163,9 @@ Public Class Server
                 solicitud.MensajeSolicitud = "Mensaje Enviado!"
                 solicitud.TipoSolicitud = 5
 
-                Dim soli As Solicitud = New Solicitud(2, Datos)
+                Dim soli As Solicitud = New Solicitud(2, sol.MensajeSolicitud)
                 WinSockServer1.EnviarDatos(message.MessageTo.User, funciones.Encriptar(soli, "Solicitud"))
-                'funciones.nuevoMensaje(message.MessageFrom.User, message.MessageTo.User, mensaje)
+                funciones.nuevoMensaje(message.MessageFrom.User, message.MessageTo.User, mensaje)
 
             Case 3
                 WinSockServer1.SetUser(IDTerminal, sol.ArgumentosSolicitud.Item(0).ToString)
@@ -177,24 +177,25 @@ Public Class Server
                 Dim arg As ArrayList = New ArrayList
                 Dim mensajes As SqlDataReader = Nothing
                 arg = funciones.obtenerMensajes(New User(sol.ArgumentosSolicitud.Item(0).ToString), New User(sol.ArgumentosSolicitud.Item(1).ToString))
-                'If Not IsNothing(mensajes) Then
-                'MsgBox(mensajes.FieldCount())
-                'For Each item As DbDataRecord In mensajes
-                'MsgBox(item.GetString(0))
-                'arg.Add(item.GetString(0))
-                'arg.Add(item.GetString(1))
-                'arg.Add(item.GetString(2))
-                'arg.Add(item.GetString(3))
-                'Next
-                'MsgBox(arg.Count)
-                solicitud.ArgumentosSolicitud = arg
-                'End If
-                'MsgBox(arg.Count)
+                If Not IsNothing(mensajes) Then
+                    MsgBox(mensajes.FieldCount())
+                    For Each item As DbDataRecord In mensajes
+                        MsgBox(item.GetString(0))
+                        arg.Add(item.GetString(0))
+                        arg.Add(item.GetString(1))
+                        arg.Add(item.GetString(2))
+                        arg.Add(item.GetString(3))
+                    Next
+                    MsgBox(arg.Count)
+
+                    'solicitud.ArgumentosSolicitud = arg
+                End If
                 solicitud.MensajeSolicitud = "Mensajes Enviados"
 
             Case Else
 
         End Select
+
         Dim xml As String = funciones.Serializar(solicitud, "Solicitud")
         Dim salMd As String = funciones.MD5Encrypt(xml)
         Dim tDes As String = funciones.encryptString(xml & "?XXXJAMXXX?" & salMd)

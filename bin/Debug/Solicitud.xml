@@ -1,49 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Solicitud xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <TipoSolicitud>4</TipoSolicitud>
-  <MensajeSolicitud>Mensajes Enviados</MensajeSolicitud>
-  <ArgumentosSolicitud>
-    <anyType xsi:type="xsd:string">jam2</anyType>
-    <anyType xsi:type="xsd:string">jam</anyType>
-    <anyType xsi:type="xsd:string">&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;Mensaje xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;Text&gt;Que tal?&lt;/Text&gt;
-  &lt;MessageTo&gt;
-    &lt;User&gt;jam&lt;/User&gt;
-  &lt;/MessageTo&gt;
-  &lt;MessageFrom&gt;
-    &lt;User&gt;jam2&lt;/User&gt;
-  &lt;/MessageFrom&gt;
-&lt;/Mensaje&gt;
-</anyType>
-    <anyType xsi:type="xsd:string">22-11-2014  06:19:25</anyType>
-    <anyType xsi:type="xsd:string">jam</anyType>
-    <anyType xsi:type="xsd:string">jam2</anyType>
-    <anyType xsi:type="xsd:string">&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;Mensaje xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;Text&gt;Hola&lt;/Text&gt;
-  &lt;MessageTo&gt;
-    &lt;User&gt;jam2&lt;/User&gt;
-  &lt;/MessageTo&gt;
-  &lt;MessageFrom&gt;
-    &lt;User&gt;jam&lt;/User&gt;
-  &lt;/MessageFrom&gt;
-&lt;/Mensaje&gt;
-</anyType>
-    <anyType xsi:type="xsd:string">22-11-2014  06:19:17</anyType>
-    <anyType xsi:type="xsd:string">jam2</anyType>
-    <anyType xsi:type="xsd:string">jam</anyType>
-    <anyType xsi:type="xsd:string">&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;Mensaje xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;Text&gt;Hola&lt;/Text&gt;
-  &lt;MessageTo&gt;
-    &lt;User&gt;jam&lt;/User&gt;
-  &lt;/MessageTo&gt;
-  &lt;MessageFrom&gt;
-    &lt;User&gt;jam2&lt;/User&gt;
-  &lt;/MessageFrom&gt;
-&lt;/Mensaje&gt;
-</anyType>
-    <anyType xsi:type="xsd:string">22-11-2014  06:19:10</anyType>
-  </ArgumentosSolicitud>
+  <TipoSolicitud>5</TipoSolicitud>
+  <MensajeSolicitud>Mensaje Enviado!</MensajeSolicitud>
 </Solicitud>

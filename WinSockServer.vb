@@ -99,7 +99,6 @@ Public Class WinSockServer
         SyncLock Me
             Try
                 Dim Cliente As InfoDeUnCliente
-                'Recorro todos los clientes y voy cerrando las conexiones 
                 For Each Cliente In Clientes.Values
                     If Cliente.User.Equals(user) Then
                         EnviarDatos(Cliente.Socket.RemoteEndPoint, datos)
@@ -114,6 +113,7 @@ Public Class WinSockServer
     Public Sub EnviarDatos(ByVal IDCliente As Net.IPEndPoint, ByVal Datos As String)
         If Clientes.ContainsKey(IDCliente) Then
             Dim mensaje As String = Datos
+            'MsgBox("Tamaño: " & Encoding.ASCII.GetBytes(mensaje).Length)
             While (Encoding.ASCII.GetBytes(mensaje).Length < 1024)
                 mensaje = mensaje & "?"
             End While
