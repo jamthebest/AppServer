@@ -24,18 +24,21 @@ Partial Class Server
     Private Sub InitializeComponent()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.txtMD5 = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.txtDesencriptado = New System.Windows.Forms.TextBox()
         Me.txtMensaje = New System.Windows.Forms.TextBox()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
-        Me.Lista = New System.Windows.Forms.ListBox()
-        Me.txtMD5 = New System.Windows.Forms.TextBox()
         Me.txtSalMD5 = New System.Windows.Forms.TextBox()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.txtSalDesencriptado = New System.Windows.Forms.TextBox()
         Me.txtSalEncriptado = New System.Windows.Forms.TextBox()
+        Me.Lista = New System.Windows.Forms.ListBox()
+        Me.btnBoton = New System.Windows.Forms.Button()
+        Me.txtPuerto = New System.Windows.Forms.TextBox()
+        Me.Label5 = New System.Windows.Forms.Label()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.TabPage2.SuspendLayout()
@@ -65,6 +68,14 @@ Partial Class Server
         Me.TabPage1.TabIndex = 0
         Me.TabPage1.Text = "Input"
         Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'txtMD5
+        '
+        Me.txtMD5.Location = New System.Drawing.Point(113, 284)
+        Me.txtMD5.Multiline = True
+        Me.txtMD5.Name = "txtMD5"
+        Me.txtMD5.Size = New System.Drawing.Size(206, 69)
+        Me.txtMD5.TabIndex = 4
         '
         'Label2
         '
@@ -115,22 +126,6 @@ Partial Class Server
         Me.TabPage2.Text = "Output"
         Me.TabPage2.UseVisualStyleBackColor = True
         '
-        'Lista
-        '
-        Me.Lista.FormattingEnabled = True
-        Me.Lista.Location = New System.Drawing.Point(458, 35)
-        Me.Lista.Name = "Lista"
-        Me.Lista.Size = New System.Drawing.Size(161, 355)
-        Me.Lista.TabIndex = 1
-        '
-        'txtMD5
-        '
-        Me.txtMD5.Location = New System.Drawing.Point(113, 284)
-        Me.txtMD5.Multiline = True
-        Me.txtMD5.Name = "txtMD5"
-        Me.txtMD5.Size = New System.Drawing.Size(206, 69)
-        Me.txtMD5.TabIndex = 4
-        '
         'txtSalMD5
         '
         Me.txtSalMD5.Location = New System.Drawing.Point(112, 281)
@@ -173,11 +168,47 @@ Partial Class Server
         Me.txtSalEncriptado.Size = New System.Drawing.Size(206, 246)
         Me.txtSalEncriptado.TabIndex = 5
         '
+        'Lista
+        '
+        Me.Lista.FormattingEnabled = True
+        Me.Lista.Location = New System.Drawing.Point(458, 35)
+        Me.Lista.Name = "Lista"
+        Me.Lista.Size = New System.Drawing.Size(161, 355)
+        Me.Lista.TabIndex = 1
+        '
+        'btnBoton
+        '
+        Me.btnBoton.Location = New System.Drawing.Point(176, 413)
+        Me.btnBoton.Name = "btnBoton"
+        Me.btnBoton.Size = New System.Drawing.Size(75, 35)
+        Me.btnBoton.TabIndex = 2
+        Me.btnBoton.Text = "Encender"
+        Me.btnBoton.UseVisualStyleBackColor = True
+        '
+        'txtPuerto
+        '
+        Me.txtPuerto.Location = New System.Drawing.Point(352, 421)
+        Me.txtPuerto.Name = "txtPuerto"
+        Me.txtPuerto.Size = New System.Drawing.Size(100, 20)
+        Me.txtPuerto.TabIndex = 3
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(287, 424)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(38, 13)
+        Me.Label5.TabIndex = 4
+        Me.Label5.Text = "Puerto"
+        '
         'Server
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(631, 410)
+        Me.ClientSize = New System.Drawing.Size(631, 457)
+        Me.Controls.Add(Me.Label5)
+        Me.Controls.Add(Me.txtPuerto)
+        Me.Controls.Add(Me.btnBoton)
         Me.Controls.Add(Me.Lista)
         Me.Controls.Add(Me.TabControl1)
         Me.Name = "Server"
@@ -188,6 +219,7 @@ Partial Class Server
         Me.TabPage2.ResumeLayout(False)
         Me.TabPage2.PerformLayout()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents TabControl1 As System.Windows.Forms.TabControl
@@ -204,4 +236,7 @@ Partial Class Server
     Friend WithEvents Label4 As System.Windows.Forms.Label
     Friend WithEvents txtSalDesencriptado As System.Windows.Forms.TextBox
     Friend WithEvents txtSalEncriptado As System.Windows.Forms.TextBox
+    Friend WithEvents btnBoton As System.Windows.Forms.Button
+    Friend WithEvents txtPuerto As System.Windows.Forms.TextBox
+    Friend WithEvents Label5 As System.Windows.Forms.Label
 End Class

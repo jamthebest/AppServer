@@ -87,12 +87,12 @@ Public Class Server
     End Sub
 
     Private Sub Server_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        With WinSockServer1
-            'Establezco el puerto donde escuchar 
-            .PuertoDeEscucha = 8050
-            'Comienzo la escucha 
-            .Escuchar()
-        End With
+        Me.txtPuerto.Text = "8050"
+    End Sub
+
+    Private Sub Server_Exit(sender As Object, e As EventArgs) Handles MyBase.FormClosing
+        Me.WinSockServer1 = Nothing
+        End
     End Sub
 
     Private Sub WinSockServer_NuevaConexion(ByVal IDTerminal As System.Net.IPEndPoint) Handles WinSockServer1.NuevaConexion
@@ -205,5 +205,24 @@ Public Class Server
 
         'Muestro el mensaje recibido 
         ' Call MsgBox(WinSockServer1.ObtenerDatos(IDTerminal))
+    End Sub
+
+    Private Sub btnBoton_Click(sender As Object, e As EventArgs) Handles btnBoton.Click
+        If btnBoton.Text.Equals("Encender") Then
+            With WinSockServer1
+                'Establezco el puerto donde escuchar 
+                .PuertoDeEscucha = Me.txtPuerto.Text
+                'Comienzo la escucha 
+                .Escuchar()
+            End With
+            btnBoton.Text = "Apagar"
+            txtPuerto.Enabled = False
+        Else
+            With WinSockServer1
+                .Cerrar()
+            End With
+            btnBoton.Text = "Encender"
+            txtPuerto.Enabled = True
+        End If
     End Sub
 End Class
