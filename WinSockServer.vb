@@ -48,12 +48,16 @@ Public Class WinSockServer
 
 #Region "METODOS"
     Public Sub SetUser(ByVal id As Net.IPEndPoint, ByVal usuario As String)
-        Dim user As InfoDeUnCliente = Clientes(id)
-        user.User = usuario
-        Clientes.Remove(id)
-        Clientes.Add(id, user)
-        'user = Clientes(id)
-        'CType(Clientes(id), InfoDeUnCliente).User = usuario
+        Try
+            Dim user As InfoDeUnCliente = Clientes(id)
+            user.User = usuario
+            Clientes.Remove(id)
+            Clientes.Add(id, user)
+            'user = Clientes(id)
+            'CType(Clientes(id), InfoDeUnCliente).User = usuario
+        Catch e As Exception
+            MsgBox("Error en la solicitud!" & vbCrLf & e.Message)
+        End Try
     End Sub
 
     Public Function getUser(ByVal id As Net.IPEndPoint) As String
@@ -61,38 +65,78 @@ Public Class WinSockServer
         Return Cliente.User
     End Function
 
-    Public Sub Escuchar()
-        tcpLsn = New TcpListener(PuertoDeEscucha)
-        'Inicio la escucha 
-        tcpLsn.Start()
-        'Creo un thread para que se quede escuchando la llegada de un cliente 
-        tcpThd = New Thread(AddressOf EsperarCliente)
-        tcpThd.Start()
+    Public Sub ActualizarListado()
+        Try
+            Dim InfoClienteActual As InfoDeUnCliente
+            Dim funciones As New Funciones()
+            'Recorro todos los clientes y voy cerrando las conexiones 
+            For Each InfoClienteActual In Clientes.Values
+                Dim Solicitud As New Solicitud(3)
+                Solicitud.ArgumentosSolicitud = funciones.obtenerClientes(New User(InfoClienteActual.User))
+                Solicitud.MensajeSolicitud = "Usuarios Enviados"
+                Call EnviarDatos(InfoClienteActual.Socket.RemoteEndPoint, funciones.Encriptar(Solicitud, "Solicitud"))
+            Next
+        Catch e As Exception
+            MsgBox("Error al actualizar listado!" & vbCrLf & e.Message)
+        End Try
     End Sub
 
+    Public Function Escuchar() As Boolean
+        Try
+            tcpLsn = New TcpListener(PuertoDeEscucha)
+            'Inicio la escucha 
+            tcpLsn.Start()
+            'Creo un thread para que se quede escuchando la llegada de un cliente 
+            tcpThd = New Thread(AddressOf EsperarCliente)
+            tcpThd.Start()
+            Return True
+        Catch e As Exception
+            MsgBox("Error al encender el Servidor: " & e.Message)
+        End Try
+        Return False
+    End Function
+
     Public Function ObtenerDatos(ByVal IDCliente As Net.IPEndPoint) As String
-        Dim InfoClienteSolicitado As InfoDeUnCliente
-        'Obtengo la informacion del cliente solicitado 
-        InfoClienteSolicitado = Clientes(IDCliente)
-        ObtenerDatos = InfoClienteSolicitado.UltimosDatosRecibidos
+        Try
+            Dim InfoClienteSolicitado As InfoDeUnCliente
+            'Obtengo la informacion del cliente solicitado 
+            InfoClienteSolicitado = Clientes(IDCliente)
+            ObtenerDatos = InfoClienteSolicitado.UltimosDatosRecibidos
+        Catch e As Exception
+            MsgBox("Error al obtener datos!" & vbCrLf & e.Message)
+        End Try
+        Return Nothing
     End Function
 
     Public Function Cerrar(ByVal IDCliente As Net.IPEndPoint) As String
-        Dim InfoClienteActual As InfoDeUnCliente
-        'Obtengo la informacion del cliente solicitado 
-        InfoClienteActual = Clientes(IDCliente)
-        'Cierro la conexion con el cliente 
-        InfoClienteActual.Socket.Close()
-        Clientes.Remove(IDCliente)
-        Return InfoClienteActual.User
+        Try
+            Dim InfoClienteActual As InfoDeUnCliente
+            'Obtengo la informacion del cliente solicitado 
+            InfoClienteActual = Clientes(IDCliente)
+            'Cierro la conexion con el cliente 
+            If Not IsNothing(InfoClienteActual.Socket) Then
+                InfoClienteActual.Socket.Close()
+            End If
+            Clientes.Remove(IDCliente)
+            Return InfoClienteActual.User
+        Catch e As Exception
+            MsgBox("Error al cerrar socket!" & vbCrLf & e.Message)
+        End Try
+        Return ""
     End Function
 
     Public Sub Cerrar()
-        Dim InfoClienteActual As InfoDeUnCliente
-        'Recorro todos los clientes y voy cerrando las conexiones 
-        For Each InfoClienteActual In Clientes.Values
-            Call Cerrar(InfoClienteActual.Socket.RemoteEndPoint)
-        Next
+        Try
+            Dim InfoClienteActual As InfoDeUnCliente
+            'Recorro todos los clientes y voy cerrando las conexiones 
+            For Each InfoClienteActual In Clientes.Values
+                Call Cerrar(InfoClienteActual.Socket.RemoteEndPoint)
+            Next
+            tcpThd.Suspend()
+            tcpLsn.Stop()
+        Catch ex As Exception
+            MsgBox("Error al Cerrar Conexiones" & ex.Message)
+        End Try
     End Sub
 
     Public Sub EnviarDatos(ByVal user As String, ByVal datos As String)
@@ -111,27 +155,31 @@ Public Class WinSockServer
     End Sub
 
     Public Sub EnviarDatos(ByVal IDCliente As Net.IPEndPoint, ByVal Datos As String)
-        If Clientes.ContainsKey(IDCliente) Then
-            Dim mens As String = Datos & "?"
-            Dim mensaje As String = mens
-            While Encoding.ASCII.GetBytes(mens).Length > 1024
-                mens = mens.Substring(0, mens.Length - 1024)
-            End While
-            
-            'MsgBox("Tamaño: " & Encoding.ASCII.GetBytes(mensaje).Length)
-            While (Encoding.ASCII.GetBytes(mens).Length < 1024)
-                mens = mens & "?"
-                mensaje = mensaje & "?"
-            End While
-            'MsgBox("Tamaño: " & Encoding.ASCII.GetBytes(mensaje).Length)
+        Try
+            If Clientes.ContainsKey(IDCliente) Then
+                Dim mens As String = Datos & "?"
+                Dim mensaje As String = mens
+                While Encoding.ASCII.GetBytes(mens).Length > 1024
+                    mens = mens.Substring(0, mens.Length - 1024)
+                End While
 
-            Dim Cliente As InfoDeUnCliente
+                'MsgBox("Tamaño: " & Encoding.ASCII.GetBytes(mensaje).Length)
+                While (Encoding.ASCII.GetBytes(mens).Length < 1024)
+                    mens = mens & "?"
+                    mensaje = mensaje & "?"
+                End While
+                'MsgBox("Tamaño: " & Encoding.ASCII.GetBytes(mensaje).Length)
 
-            'Obtengo la informacion del cliente al que se le quiere enviar el mensaje 
-            Cliente = Clientes(IDCliente)
-            'Le envio el mensaje 
-            Cliente.Socket.Send(Encoding.ASCII.GetBytes(mensaje))
-        End If
+                Dim Cliente As InfoDeUnCliente
+
+                'Obtengo la informacion del cliente al que se le quiere enviar el mensaje 
+                Cliente = Clientes(IDCliente)
+                'Le envio el mensaje 
+                Cliente.Socket.Send(Encoding.ASCII.GetBytes(mensaje))
+            End If
+        Catch e As Exception
+            MsgBox("Error al Enviar Datos!" & vbCrLf & e.Message)
+        End Try
     End Sub
 
     Public Sub EnviarDatos(ByVal Datos As String)

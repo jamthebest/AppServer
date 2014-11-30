@@ -223,47 +223,67 @@ Public Class Funciones
 
     Public Function DesSerializar(ByVal xml As String) As Mensaje
         SyncLock Me
-            Dim mensaje As New Mensaje()
-            Dim x As New XmlSerializer(mensaje.GetType)
-            'Deserialize text file to a new object.
-            Dim objStreamReader As New StreamReader(xmlToFile(xml))
             Try
-                mensaje = x.Deserialize(objStreamReader)
+                Dim mensaje As New Mensaje()
+                Dim x As New XmlSerializer(mensaje.GetType)
+                'Deserialize text file to a new object.
+                Dim objStreamReader As New StreamReader(xmlToFile(xml))
+                Try
+                    mensaje = x.Deserialize(objStreamReader)
+                Catch ex As Exception
+                    MsgBox("Error al DesSerializar: " & ex.ToString)
+                Finally
+                    objStreamReader.Close()
+                End Try
+                Return mensaje
             Catch ex As Exception
-                MsgBox("Error al DesSerializar: " & ex.ToString)
-            Finally
-                objStreamReader.Close()
+                MsgBox("Error DesSerializar mensaje!" & vbCrLf & ex.Message)
             End Try
-            Return mensaje
+            Return Nothing
         End SyncLock
     End Function
 
     Public Function DesSerializar(ByVal xml As String, ByVal nada As Integer) As Solicitud
         SyncLock Me
-            Dim mensaje As New Solicitud()
-            Dim x As New XmlSerializer(mensaje.GetType)
-            'Deserialize text file to a new object.
-            Dim objStreamReader As New StreamReader(xmlToFile(xml))
             Try
-                mensaje = x.Deserialize(objStreamReader)
+                Dim mensaje As New Solicitud()
+                Dim x As New XmlSerializer(mensaje.GetType)
+                'Deserialize text file to a new object.
+                Dim objStreamReader As New StreamReader(xmlToFile(xml))
+                Try
+                    mensaje = x.Deserialize(objStreamReader)
+                Catch ex As Exception
+                    MsgBox("Error al DesSerializar: " & ex.ToString)
+                Finally
+                    objStreamReader.Close()
+                End Try
+                Return mensaje
             Catch ex As Exception
-                MsgBox("Error al DesSerializar: " & ex.ToString)
-            Finally
-                objStreamReader.Close()
+                MsgBox("Error DesSerializar solicitud!" & vbCrLf & ex.Message)
             End Try
-            Return mensaje
+            Return Nothing
         End SyncLock
     End Function
 
     Public Function Encriptar(ByVal objeto As Solicitud, ByVal ruta As String) As String
-        Dim txtXML As String = Serializar(objeto, ruta) 'funcion que convierte el mensaje a XML
-        Dim md As String = MD5Encrypt(txtXML) 'Se encripta el XML en MD5
-        Return encryptString(txtXML & "?XXXJAMXXX?" & md) 'Se encripta el MD5 con el XML en 3DES
+        Try
+            Dim txtXML As String = Serializar(objeto, ruta) 'funcion que convierte el mensaje a XML
+            Dim md As String = MD5Encrypt(txtXML) 'Se encripta el XML en MD5
+            Return encryptString(txtXML & "?XXXJAMXXX?" & md) 'Se encripta el MD5 con el XML en 3DES
+        Catch ex As Exception
+            MsgBox("Error Encriptar solicitud!" & vbCrLf & ex.Message)
+        End Try
+        Return ""
     End Function
 
     Private Function xmlToFile(ByVal xml As String) As String
-        My.Computer.FileSystem.WriteAllText("Server.xml", xml, False)
-        Return "Server.xml"
+        Try
+            My.Computer.FileSystem.WriteAllText("Server.xml", xml, False)
+            Return "Server.xml"
+        Catch ex As Exception
+            MsgBox("Error crear archivo XML!" & vbCrLf & ex.Message)
+        End Try
+        Return Nothing
     End Function
 
     Private Function FileToString(ByVal ruta As String) As String
@@ -325,19 +345,24 @@ Public Class Funciones
 
     Public Function BytesToFile(ByVal bytDataArray As String, ByVal nombre As String, ByVal numero As Integer) As System.IO.FileStream
         SyncLock Me
-            Dim fsDataArray As New System.IO.FileStream(nombre & numero & ".mp3", System.IO.FileMode.Create)
             Try
-                With fsDataArray
-                    .Write(Convert.FromBase64String(bytDataArray), 0, bytDataArray.Length)
-                End With
+                Dim fsDataArray As New System.IO.FileStream(nombre & numero & ".mp3", System.IO.FileMode.Create)
+                Try
+                    With fsDataArray
+                        .Write(Convert.FromBase64String(bytDataArray), 0, bytDataArray.Length)
+                    End With
+                Catch ex As Exception
+                    MsgBox("Error al convertir Bytes en Audio: " & ex.ToString)
+                Finally
+                    With fsDataArray
+                        .Close() : .Dispose()
+                    End With
+                End Try
+                Return fsDataArray
             Catch ex As Exception
-                MsgBox("Error al convertir Bytes en Audio: " & ex.ToString)
-            Finally
-                With fsDataArray
-                    .Close() : .Dispose()
-                End With
+                MsgBox("Error al crear archivo de audio!" & vbCrLf & ex.Message)
             End Try
-            Return fsDataArray
+            Return Nothing
         End SyncLock
     End Function
 
@@ -408,6 +433,56 @@ Public Class Funciones
                 MsgBox("Error al desencriptar: " & ex.ToString)
             End Try
             Return Encoding.ASCII.GetString(ITransform.TransformFinalBlock(encData, 0, encData.Length()))
+        End SyncLock
+    End Function
+
+    Public Sub Bitacora(ByVal descripcion As String)
+        SyncLock Me
+            Try
+                Conectado()
+                cmd = New SqlCommand("InsertBitacora")
+                cmd.CommandType = CommandType.StoredProcedure
+                cmd.Connection = cnn
+                cmd.Parameters.AddWithValue("@descripcion", descripcion)
+                cmd.Parameters.AddWithValue("@fecha", DateTime.Now.ToString("dd-MM-yyyy hh:mm:ss"))
+
+                Dim dr As SqlDataReader
+                dr = cmd.ExecuteReader
+            Catch ex As Exception
+                MsgBox("Error al escribir en la bitácora: " & ex.Message)
+            Finally
+                Desconectado()
+            End Try
+        End SyncLock
+    End Sub
+
+    Public Function getBitacora() As ArrayList
+        SyncLock Me
+            Try
+                Conectado()
+                cmd = New SqlCommand("getBitacora")
+                cmd.CommandType = CommandType.StoredProcedure
+                cmd.Connection = cnn
+
+                Dim dr As SqlDataReader
+                dr = cmd.ExecuteReader
+                Dim bitacora As ArrayList = New ArrayList()
+                If dr.HasRows = True Then
+                    For Each item As System.Data.Common.DbDataRecord In dr
+                        bitacora.Add(item.GetString(0) & "  " & item.GetString(1))
+                    Next
+                End If
+
+                'My.Computer.FileSystem.WriteAllText("log.txt", bitacora, False)
+                Desconectado()
+
+                Return bitacora
+            Catch ex As Exception
+                MsgBox("Error al obtener Bitácora: " & ex.Message)
+                Return Nothing
+            Finally
+                Desconectado()
+            End Try
         End SyncLock
     End Function
 End Class

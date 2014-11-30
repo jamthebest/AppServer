@@ -45,6 +45,9 @@
   <PropertyGroup>
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>dialog-20.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -70,6 +73,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bitacora.Designer.vb">
+      <DependentUpon>Bitacora.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Bitacora.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Conexion.vb" />
     <Compile Include="Datos.vb" />
     <Compile Include="Funciones.vb" />
@@ -100,6 +109,9 @@
     <Compile Include="WinSockServer.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Bitacora.resx">
+      <DependentUpon>Bitacora.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
@@ -121,6 +133,16 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Apagar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Encender.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="dialog-20.ico" />
+    <None Include="Resources\log.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -22,6 +22,7 @@ Partial Class Server
     'No lo modifique con el editor de código.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Server))
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.txtMD5 = New System.Windows.Forms.TextBox()
@@ -36,9 +37,10 @@ Partial Class Server
         Me.txtSalDesencriptado = New System.Windows.Forms.TextBox()
         Me.txtSalEncriptado = New System.Windows.Forms.TextBox()
         Me.Lista = New System.Windows.Forms.ListBox()
-        Me.btnBoton = New System.Windows.Forms.Button()
         Me.txtPuerto = New System.Windows.Forms.TextBox()
         Me.Label5 = New System.Windows.Forms.Label()
+        Me.btnBitacora = New System.Windows.Forms.Button()
+        Me.btnBoton = New System.Windows.Forms.Button()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.TabPage2.SuspendLayout()
@@ -74,6 +76,8 @@ Partial Class Server
         Me.txtMD5.Location = New System.Drawing.Point(113, 284)
         Me.txtMD5.Multiline = True
         Me.txtMD5.Name = "txtMD5"
+        Me.txtMD5.ReadOnly = True
+        Me.txtMD5.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtMD5.Size = New System.Drawing.Size(206, 69)
         Me.txtMD5.TabIndex = 4
         '
@@ -100,6 +104,8 @@ Partial Class Server
         Me.txtDesencriptado.Location = New System.Drawing.Point(220, 31)
         Me.txtDesencriptado.Multiline = True
         Me.txtDesencriptado.Name = "txtDesencriptado"
+        Me.txtDesencriptado.ReadOnly = True
+        Me.txtDesencriptado.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtDesencriptado.Size = New System.Drawing.Size(205, 246)
         Me.txtDesencriptado.TabIndex = 1
         '
@@ -108,6 +114,8 @@ Partial Class Server
         Me.txtMensaje.Location = New System.Drawing.Point(7, 31)
         Me.txtMensaje.Multiline = True
         Me.txtMensaje.Name = "txtMensaje"
+        Me.txtMensaje.ReadOnly = True
+        Me.txtMensaje.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtMensaje.Size = New System.Drawing.Size(206, 246)
         Me.txtMensaje.TabIndex = 0
         '
@@ -131,6 +139,8 @@ Partial Class Server
         Me.txtSalMD5.Location = New System.Drawing.Point(112, 281)
         Me.txtSalMD5.Multiline = True
         Me.txtSalMD5.Name = "txtSalMD5"
+        Me.txtSalMD5.ReadOnly = True
+        Me.txtSalMD5.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtSalMD5.Size = New System.Drawing.Size(206, 69)
         Me.txtSalMD5.TabIndex = 9
         '
@@ -157,6 +167,8 @@ Partial Class Server
         Me.txtSalDesencriptado.Location = New System.Drawing.Point(219, 28)
         Me.txtSalDesencriptado.Multiline = True
         Me.txtSalDesencriptado.Name = "txtSalDesencriptado"
+        Me.txtSalDesencriptado.ReadOnly = True
+        Me.txtSalDesencriptado.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtSalDesencriptado.Size = New System.Drawing.Size(205, 246)
         Me.txtSalDesencriptado.TabIndex = 6
         '
@@ -165,6 +177,8 @@ Partial Class Server
         Me.txtSalEncriptado.Location = New System.Drawing.Point(6, 28)
         Me.txtSalEncriptado.Multiline = True
         Me.txtSalEncriptado.Name = "txtSalEncriptado"
+        Me.txtSalEncriptado.ReadOnly = True
+        Me.txtSalEncriptado.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtSalEncriptado.Size = New System.Drawing.Size(206, 246)
         Me.txtSalEncriptado.TabIndex = 5
         '
@@ -176,18 +190,9 @@ Partial Class Server
         Me.Lista.Size = New System.Drawing.Size(161, 355)
         Me.Lista.TabIndex = 1
         '
-        'btnBoton
-        '
-        Me.btnBoton.Location = New System.Drawing.Point(176, 413)
-        Me.btnBoton.Name = "btnBoton"
-        Me.btnBoton.Size = New System.Drawing.Size(75, 35)
-        Me.btnBoton.TabIndex = 2
-        Me.btnBoton.Text = "Encender"
-        Me.btnBoton.UseVisualStyleBackColor = True
-        '
         'txtPuerto
         '
-        Me.txtPuerto.Location = New System.Drawing.Point(352, 421)
+        Me.txtPuerto.Location = New System.Drawing.Point(227, 424)
         Me.txtPuerto.Name = "txtPuerto"
         Me.txtPuerto.Size = New System.Drawing.Size(100, 20)
         Me.txtPuerto.TabIndex = 3
@@ -195,22 +200,42 @@ Partial Class Server
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(287, 424)
+        Me.Label5.Location = New System.Drawing.Point(162, 427)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(38, 13)
         Me.Label5.TabIndex = 4
         Me.Label5.Text = "Puerto"
+        '
+        'btnBitacora
+        '
+        Me.btnBitacora.Image = Global.ProyectoServer.My.Resources.Resources.log
+        Me.btnBitacora.Location = New System.Drawing.Point(513, 401)
+        Me.btnBitacora.Name = "btnBitacora"
+        Me.btnBitacora.Size = New System.Drawing.Size(50, 50)
+        Me.btnBitacora.TabIndex = 5
+        Me.btnBitacora.UseVisualStyleBackColor = True
+        '
+        'btnBoton
+        '
+        Me.btnBoton.Image = Global.ProyectoServer.My.Resources.Resources.Encender
+        Me.btnBoton.Location = New System.Drawing.Point(47, 404)
+        Me.btnBoton.Name = "btnBoton"
+        Me.btnBoton.Size = New System.Drawing.Size(50, 50)
+        Me.btnBoton.TabIndex = 2
+        Me.btnBoton.UseVisualStyleBackColor = True
         '
         'Server
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(631, 457)
+        Me.Controls.Add(Me.btnBitacora)
         Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.txtPuerto)
         Me.Controls.Add(Me.btnBoton)
         Me.Controls.Add(Me.Lista)
         Me.Controls.Add(Me.TabControl1)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Server"
         Me.Text = "Server"
         Me.TabControl1.ResumeLayout(False)
@@ -239,4 +264,5 @@ Partial Class Server
     Friend WithEvents btnBoton As System.Windows.Forms.Button
     Friend WithEvents txtPuerto As System.Windows.Forms.TextBox
     Friend WithEvents Label5 As System.Windows.Forms.Label
+    Friend WithEvents btnBitacora As System.Windows.Forms.Button
 End Class

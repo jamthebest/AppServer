@@ -1,5 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Imports System.Data.Common
+Imports System.Threading
 
 Public Class Server
 
@@ -8,15 +9,27 @@ Public Class Server
     Private demo1 As Threading.Thread = Nothing
     Private demo2 As Threading.Thread = Nothing
     Private demo3 As Threading.Thread = Nothing
+    Private thread As Thread
     Dim IP1 As String
     Dim port1 As String
     Dim texto As String
     Dim texto2 As String
     Dim texto3 As String
     Dim tipo As Boolean
+    Private encendido As Boolean = False
+    Private tool As ToolTip = New ToolTip()
+    Private Mess As Mensaje
+    Private mensaje1 As String
     Dim funciones As Funciones = New Funciones()
     Delegate Sub SetTextCallback(ByVal [text1] As String)
 
+    Private Sub GuardarMensaje()
+        Me.NuevoMensaje(Mess, mensaje1)
+    End Sub
+
+    Private Sub NuevoMensaje(ByVal Message As Mensaje, ByVal Mensaje As String)
+        funciones.nuevoMensaje(Message.MessageFrom.User, Message.MessageTo.User, Mensaje)
+    End Sub
 
     Private Sub ThreadProcSafe()
         Me.SetText(IP1)
@@ -87,12 +100,20 @@ Public Class Server
     End Sub
 
     Private Sub Server_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        funciones.Bitacora("La aplicación Servidor fue abierta")
         Me.txtPuerto.Text = "8050"
+        tool.SetToolTip(Me.btnBoton, "Encender")
+        tool.SetToolTip(Me.btnBitacora, "Bitácora")
     End Sub
 
     Private Sub Server_Exit(sender As Object, e As EventArgs) Handles MyBase.FormClosing
-        Me.WinSockServer1 = Nothing
-        End
+        Try
+            funciones.Bitacora("La aplicación Servidor fue cerrada")
+            Me.WinSockServer1 = Nothing
+            End
+        Catch ex As Exception
+            MsgBox("Error al Salir" & ex.Message)
+        End Try
     End Sub
 
     Private Sub WinSockServer_NuevaConexion(ByVal IDTerminal As System.Net.IPEndPoint) Handles WinSockServer1.NuevaConexion
@@ -112,9 +133,11 @@ Public Class Server
         'Muestro con quien se termino la conexion 
         'MsgBox("Se ha desconectado el cliente desde la IP= " & IDTerminal.Address.ToString & _
         '                                                    ",Puerto = " & IDTerminal.Port)
+        funciones.Bitacora("El usuario " & WinSockServer1.getUser(IDTerminal) & " se desconectó")
         IP1 = WinSockServer1.Cerrar(IDTerminal)
         tipo = False
         funciones.cambioEstado(New User(IP1), 0)
+        WinSockServer1.ActualizarListado()
         Me.SetText(IP1)
         'Me.demo = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.ThreadProcSafe))
         'Me.demo.Start()
@@ -134,12 +157,18 @@ Public Class Server
         Dim sol As Solicitud = funciones.DesSerializar(x, 1)
         texto = Datos
         texto2 = x
+        If Not funciones.MD5Encrypt(texto2).Equals(texto3) Then
+            MsgBox("Trama Incorrecta!" + vbCrLf + "Error al recibir la trama. La trama ha sido modificada", MsgBoxStyle.Critical)
+            Exit Sub
+        End If
         Dim solicitud As Solicitud = New Solicitud(sol.TipoSolicitud)
         Select Case sol.TipoSolicitud
             Case 1
+                funciones.Bitacora("Intento de logueo con el usuario " & sol.ArgumentosSolicitud.Item(0))
                 Dim dat As Datos = New Datos(sol.ArgumentosSolicitud.Item(0), sol.ArgumentosSolicitud.Item(1))
                 Dim res As Boolean = funciones.Validar(dat)
                 If res Then
+                    funciones.Bitacora("Éxito al loguear al usuario " & sol.ArgumentosSolicitud.Item(0))
                     solicitud.MensajeSolicitud = "Exito al hacer login"
                     IP1 = sol.ArgumentosSolicitud.Item(0).ToString
                     WinSockServer1.SetUser(IDTerminal, IP1)
@@ -148,6 +177,7 @@ Public Class Server
                     Me.demo = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.ThreadProcSafe))
                     Me.demo.Start()
                 Else
+                    funciones.Bitacora("Error al hacer login con el usuario " & sol.ArgumentosSolicitud.Item(0))
                     solicitud.MensajeSolicitud = "Error al hacer login"
                 End If
 
@@ -158,27 +188,46 @@ Public Class Server
                 mensaje = mensaje.Substring(0, mensaje.IndexOf("?XXXJAMXXX?"))
                 texto2 = mensaje
                 Dim message As Mensaje = funciones.DesSerializar(mensaje)
+                If Not IsNothing(message.Sound) Then
+                    If IsNothing(message.Text) Then
+                        funciones.Bitacora("El usuario " & message.MessageFrom.User & " envió un mensaje de audio a " & message.MessageTo.User)
+                    Else
+                        funciones.Bitacora("El usuario " & message.MessageFrom.User & " envió un mensaje de audio y texto a " & message.MessageTo.User)
+                    End If
+                Else
+                    funciones.Bitacora("El usuario " & message.MessageFrom.User & " envió un mensaje de texto a " & message.MessageTo.User)
+                End If
                 WinSockServer1.SetUser(IDTerminal, message.MessageFrom.User)
 
                 solicitud.MensajeSolicitud = "Mensaje Enviado!"
                 solicitud.TipoSolicitud = 5
 
                 Dim soli As Solicitud = New Solicitud(2, sol.MensajeSolicitud)
+
                 WinSockServer1.EnviarDatos(message.MessageTo.User, funciones.Encriptar(soli, "Solicitud"))
-                funciones.nuevoMensaje(message.MessageFrom.User, message.MessageTo.User, mensaje)
+
+                Me.Mess = message
+                Me.mensaje1 = mensaje
+                Me.thread = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.GuardarMensaje))
+                Me.thread.Start()
+                'funciones.nuevoMensaje(message.MessageFrom.User, message.MessageTo.User, mensaje)
 
             Case 3
+                funciones.Bitacora("El usuario " & sol.ArgumentosSolicitud.Item(0).ToString & " solicitó el listado de usuarios")
                 WinSockServer1.SetUser(IDTerminal, sol.ArgumentosSolicitud.Item(0).ToString)
                 solicitud.ArgumentosSolicitud = funciones.obtenerClientes(New User(sol.ArgumentosSolicitud.Item(0).ToString))
                 solicitud.MensajeSolicitud = "Usuarios Enviados"
+                funciones.Bitacora("Se envió el listado de usuarios a " & sol.ArgumentosSolicitud.Item(0).ToString)
 
             Case 4
+                funciones.Bitacora("El usuario " & sol.ArgumentosSolicitud.Item(0).ToString & " solicitó el historial de mensajes con " & sol.ArgumentosSolicitud.Item(1).ToString)
                 WinSockServer1.SetUser(IDTerminal, sol.ArgumentosSolicitud.Item(0).ToString)
                 Dim arg As ArrayList = New ArrayList
                 arg = funciones.obtenerMensajes(New User(sol.ArgumentosSolicitud.Item(0).ToString), New User(sol.ArgumentosSolicitud.Item(1).ToString))
 
                 solicitud.ArgumentosSolicitud = arg
                 solicitud.MensajeSolicitud = "Mensajes Enviados"
+                funciones.Bitacora("Se envió el historial de mensajes a " & sol.ArgumentosSolicitud.Item(0).ToString)
 
             Case Else
 
@@ -203,26 +252,44 @@ Public Class Server
         Me.demo3 = New Threading.Thread(New Threading.ThreadStart(AddressOf Me.ThreadProcSafe3))
         Me.demo3.Start()
 
+        System.Threading.Thread.Sleep(600)
+        If solicitud.TipoSolicitud = 1 Then
+            WinSockServer1.ActualizarListado()
+        End If
+
         'Muestro el mensaje recibido 
         ' Call MsgBox(WinSockServer1.ObtenerDatos(IDTerminal))
     End Sub
 
     Private Sub btnBoton_Click(sender As Object, e As EventArgs) Handles btnBoton.Click
-        If btnBoton.Text.Equals("Encender") Then
+        If Not encendido Then
+            funciones.Bitacora("Se encendió el servidor")
             With WinSockServer1
                 'Establezco el puerto donde escuchar 
                 .PuertoDeEscucha = Me.txtPuerto.Text
                 'Comienzo la escucha 
-                .Escuchar()
+                If .Escuchar() Then
+                    encendido = True
+                    txtPuerto.Enabled = False
+                    tool.SetToolTip(Me.btnBoton, "Apagar")
+                    btnBoton.Image = ProyectoServer.My.Resources.Apagar
+                End If
             End With
-            btnBoton.Text = "Apagar"
-            txtPuerto.Enabled = False
         Else
+            funciones.Bitacora("Se apagó el servidor")
             With WinSockServer1
                 .Cerrar()
             End With
-            btnBoton.Text = "Encender"
+            encendido = False
             txtPuerto.Enabled = True
+            tool.SetToolTip(Me.btnBoton, "Encender")
+            btnBoton.Image = ProyectoServer.My.Resources.Encender
+
         End If
+    End Sub
+
+    Private Sub btnBitacora_Click(sender As Object, e As EventArgs) Handles btnBitacora.Click
+        Dim bitacora As New Bitacora()
+        bitacora.Show()
     End Sub
 End Class
