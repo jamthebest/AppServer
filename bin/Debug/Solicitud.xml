@@ -4,10 +4,9 @@
   <MensajeSolicitud>Usuarios Enviados</MensajeSolicitud>
   <ArgumentosSolicitud>
     <anyType xsi:type="xsd:string">Conectados</anyType>
-    <anyType xsi:type="xsd:string">jam2</anyType>
     <anyType xsi:type="xsd:string">Desconectados</anyType>
-    <anyType xsi:type="xsd:string">jam</anyType>
-    <anyType xsi:type="xsd:string">user2</anyType>
+    <anyType xsi:type="xsd:string">user1</anyType>
     <anyType xsi:type="xsd:string">user3</anyType>
+    <anyType xsi:type="xsd:string">user4</anyType>
   </ArgumentosSolicitud>
 </Solicitud>

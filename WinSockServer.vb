@@ -71,10 +71,12 @@ Public Class WinSockServer
             Dim funciones As New Funciones()
             'Recorro todos los clientes y voy cerrando las conexiones 
             For Each InfoClienteActual In Clientes.Values
-                Dim Solicitud As New Solicitud(3)
-                Solicitud.ArgumentosSolicitud = funciones.obtenerClientes(New User(InfoClienteActual.User))
-                Solicitud.MensajeSolicitud = "Usuarios Enviados"
-                Call EnviarDatos(InfoClienteActual.Socket.RemoteEndPoint, funciones.Encriptar(Solicitud, "Solicitud"))
+                If Not IsNothing(InfoClienteActual.User) Then
+                    Dim Solicitud As New Solicitud(3)
+                    Solicitud.ArgumentosSolicitud = funciones.obtenerClientes(New User(InfoClienteActual.User))
+                    Solicitud.MensajeSolicitud = "Usuarios Enviados"
+                    Call EnviarDatos(InfoClienteActual.Socket.RemoteEndPoint, funciones.Encriptar(Solicitud, "Solicitud"))
+                End If
             Next
         Catch e As Exception
             MsgBox("Error al actualizar listado!" & vbCrLf & e.Message)
