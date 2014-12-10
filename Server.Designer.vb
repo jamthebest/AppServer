@@ -235,7 +235,9 @@ Partial Class Server
         Me.Controls.Add(Me.btnBoton)
         Me.Controls.Add(Me.Lista)
         Me.Controls.Add(Me.TabControl1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
+        Me.MaximizeBox = False
         Me.Name = "Server"
         Me.Text = "Server"
         Me.TabControl1.ResumeLayout(False)

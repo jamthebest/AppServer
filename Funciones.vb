@@ -108,6 +108,9 @@ Public Class Funciones
     Public Function cambioEstado(ByVal usuario As User, ByVal estado As Integer) As Boolean
         SyncLock Me
             Try
+                If usuario.Equals("") Or IsNothing(usuario) Then
+                    Return True
+                End If
                 Conectado()
                 cmd = New SqlCommand("estadoConectado")
                 cmd.CommandType = CommandType.StoredProcedure
