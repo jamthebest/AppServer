@@ -144,10 +144,28 @@ Public Class Funciones
 
                 If dr.HasRows Then
                     For Each item As System.Data.Common.DbDataRecord In dr
-                        arg.Add(item.GetString(0))
-                        arg.Add(item.GetString(1))
-                        arg.Add(item.GetString(2))
-                        arg.Add(item.GetString(3))
+                        Dim xml As New Mensaje()
+                        Dim de As String = item.GetString(0)
+                        Dim MenTo As String = item.GetString(1)
+                        Dim mensaje As String = item.GetString(2)
+                        Dim audio As String = item.GetString(3)
+                        Dim fecha As String = item.GetString(4)
+                        xml.MessageFrom = New User(de)
+                        xml.MessageTo = New User(MenTo)
+                        If Not mensaje.Equals("") Then
+                            xml.Text = mensaje
+                        End If
+                        If Not audio.Equals("") Then
+                            xml.Sound = audio
+                        End If
+
+                        arg.Add(de)
+                        arg.Add(MenTo)
+                        arg.Add(Serializar(xml, "Mensaje"))
+                        arg.Add(fecha)
+                        If File.Exists("Mensaje.xml") Then
+                            File.Delete("Mensaje.xml")
+                        End If
                     Next
                     Return arg
                 End If
@@ -161,7 +179,7 @@ Public Class Funciones
         End SyncLock
     End Function
 
-    Public Function nuevoMensaje(ByVal de As String, ByVal para As String, ByVal mensaje As String) As Boolean
+    Public Function nuevoMensaje(ByVal de As String, ByVal para As String, ByVal mensaje As String, ByVal audio As String) As Boolean
         SyncLock Me
             Try
                 Conectado()
@@ -171,6 +189,7 @@ Public Class Funciones
                 cmd.Parameters.AddWithValue("@de", de)
                 cmd.Parameters.AddWithValue("@para", para)
                 cmd.Parameters.AddWithValue("@mensaje", mensaje)
+                cmd.Parameters.AddWithValue("@audio", audio)
                 cmd.Parameters.AddWithValue("@fecha", DateTime.Now.ToString("dd-MM-yyyy  hh:mm:ss"))
                 Dim dr As SqlDataReader
                 dr = cmd.ExecuteReader

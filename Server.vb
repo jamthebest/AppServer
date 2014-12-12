@@ -24,11 +24,17 @@ Public Class Server
     Delegate Sub SetTextCallback(ByVal [text1] As String)
 
     Private Sub GuardarMensaje()
-        Me.NuevoMensaje(Mess, mensaje1)
+        Me.NuevoMensaje(Mess)
     End Sub
 
-    Private Sub NuevoMensaje(ByVal Message As Mensaje, ByVal Mensaje As String)
-        funciones.nuevoMensaje(Message.MessageFrom.User, Message.MessageTo.User, Mensaje)
+    Private Sub NuevoMensaje(ByVal Message As Mensaje)
+        If IsNothing(Message.Sound) Then
+            Message.Sound = ""
+        End If
+        If IsNothing(Message.Text) Then
+            Message.Text = ""
+        End If
+        funciones.nuevoMensaje(Message.MessageFrom.User, Message.MessageTo.User, Message.Text, Message.Sound)
     End Sub
 
     Private Sub ThreadProcSafe()
@@ -190,7 +196,7 @@ Public Class Server
                 texto2 = mensaje
                 Dim message As Mensaje = funciones.DesSerializar(mensaje)
                 If Not IsNothing(message.Sound) Then
-                    If IsNothing(message.Text) Then
+                    If IsNothing(message.Text) Or message.Text.Equals("") Then
                         funciones.Bitacora("El usuario " & message.MessageFrom.User & " envió un mensaje de audio a " & message.MessageTo.User)
                     Else
                         funciones.Bitacora("El usuario " & message.MessageFrom.User & " envió un mensaje de audio y texto a " & message.MessageTo.User)

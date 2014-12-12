@@ -1,6 +1,6 @@
 ﻿Public Class Mensaje
     Private Texto As String
-    Private Sonido As Byte()
+    Private Sonido As String
     Private Para As User
     Private De As User
 
@@ -25,7 +25,7 @@
         Me.De = de
     End Sub
 
-    Public Sub New(ByVal text As String, ByVal sonido As Byte(), ByVal para As User, ByVal de As User)
+    Public Sub New(ByVal text As String, ByVal sonido As String, ByVal para As User, ByVal de As User)
         Texto = text
         Me.Sonido = sonido
         Me.Para = para
@@ -41,11 +41,11 @@
         End Set
     End Property
 
-    Public Property Sound() As Byte()
+    Public Property Sound() As String
         Get
             Return Sonido
         End Get
-        Set(ByVal Value As Byte())
+        Set(ByVal Value As String)
             Sonido = Value
         End Set
     End Property
